@@ -41,8 +41,11 @@ img_file = st.camera_input("Take a photo")
 if img_file is not None:
     bytes_data = img_file.getvalue()
     img_array = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
-    gray = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
 
+    # ✅ Flip horizontally to match the mirrored preview the user saw
+    img_array = cv2.flip(img_array, 1)
+
+    gray = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, minNeighbors=10, minSize=(80, 80))
 
     if len(faces) == 0:
@@ -53,5 +56,4 @@ if img_file is not None:
             label = predict_emotion(face_gray)
             cv2.rectangle(img_array, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(img_array, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
-
         st.image(cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB), caption="Result")
