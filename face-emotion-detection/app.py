@@ -41,13 +41,10 @@ img_file = st.camera_input("Take a photo")
 if img_file is not None:
     bytes_data = img_file.getvalue()
     img_array = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
-
-    # ✅ Flip horizontally to match the mirrored preview the user saw
-    img_array = cv2.flip(img_array, 1)
+    img_array = cv2.flip(img_array, 1)   # ✅ mirror horizontally
 
     gray = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, minNeighbors=10, minSize=(80, 80))
-
     if len(faces) == 0:
         st.warning("No face detected — try retaking the photo with better lighting.")
     else:
