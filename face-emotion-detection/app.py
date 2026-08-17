@@ -10,7 +10,7 @@ st.title("Emotion Detection")
 @st.cache_resource
 def load_emotion_model():
     model_path = hf_hub_download(
-        repo_id="ZainAliKhanZK/emotion-model",
+        repo_id="ZainAliKhanZAK/emotion-model",
         filename="emotion_model.keras"
     )
     return load_model(model_path)
@@ -21,7 +21,6 @@ model = load_emotion_model()
 def load_face_cascade():
     return cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-model = load_emotion_model()
 face_cascade = load_face_cascade()
 classes = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
