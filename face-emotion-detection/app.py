@@ -26,6 +26,7 @@ classes = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
 def preprocess_face(face_img):
     face = cv2.resize(face_img, (48, 48))
+    face = face / 255.0
     face = np.expand_dims(face, axis=-1)
     face = np.expand_dims(face, axis=0)
     return face.astype(np.float32)
