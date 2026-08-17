@@ -2,12 +2,20 @@ import streamlit as st
 import cv2
 import numpy as np
 from tensorflow.keras.models import load_model
+from huggingface_hub import hf_hub_download
 
 st.title("Emotion Detection")
 
+
 @st.cache_resource
 def load_emotion_model():
-    return load_model("second_model.keras")
+    model_path = hf_hub_download(
+        repo_id="ZainAliKhanZK/emotion-model",
+        filename="emotion_model.keras"
+    )
+    return load_model(model_path)
+
+model = load_emotion_model()
 
 @st.cache_resource
 def load_face_cascade():
