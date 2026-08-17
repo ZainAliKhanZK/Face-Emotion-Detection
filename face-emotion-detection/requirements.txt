@@ -1,0 +1,7 @@
+streamlit
+streamlit-webrtc
+opencv-python-headless==4.13.0.92 
+tensorflow-cpu
+numpy
+huggingface_hub
+av
