@@ -1,49 +1,24 @@
-# pip install streamlit-webrtc streamlit opencv-python-headless
-
-import cv2
-import av
-import numpy as np
 import streamlit as st
+import cv2
+import numpy as np
 from tensorflow.keras.models import load_model
-from streamlit_webrtc import VideoProcessorBase
-from streamlit_webrtc import webrtc_streamer, RTCConfiguration
-from huggingface_hub import hf_hub_download
 
-
-face_cascade = cv2.CascadeClassifier(
-    cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
-)
-
+st.title("Emotion Detection")
 
 @st.cache_resource
 def load_emotion_model():
-    model_path = hf_hub_download(
-        repo_id="ZainAliKhanZAK/emotion-model",
-        filename="emotion_model.keras"
-    )
-    return load_model(model_path)
+    return load_model("second_model.keras")
+
+@st.cache_resource
+def load_face_cascade():
+    return cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 model = load_emotion_model()
-
-# @st.cache_resource
-# def load_emotion_model():
-#     return load_model("second_model.keras")
-
-# model = load_emotion_model()
-
-
-# ✅ Load Haar Cascade for face detection
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-
-# ✅ Load the trained emotion recognition model
-
-# ✅ Define emotion classes
+face_cascade = load_face_cascade()
 classes = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
-# ✅ Preprocessing function (expects grayscale face image)
 def preprocess_face(face_img):
     face = cv2.resize(face_img, (48, 48))
-    face = face / 255.0       
     face = np.expand_dims(face, axis=-1)
     face = np.expand_dims(face, axis=0)
     return face.astype(np.float32)
@@ -55,16 +30,11 @@ def predict_emotion(face_img):
 
 img_file = st.camera_input("Take a photo")
 
-img_file = st.camera_input("Take a photo")
-
 if img_file is not None:
     bytes_data = img_file.getvalue()
     img_array = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
-
-    # ✅ Flip horizontally to match the mirrored preview the user saw
-    img_array = cv2.flip(img_array, 1)
-
     gray = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
+
     faces = face_cascade.detectMultiScale(gray, minNeighbors=10, minSize=(80, 80))
 
     if len(faces) == 0:
@@ -75,4 +45,5 @@ if img_file is not None:
             label = predict_emotion(face_gray)
             cv2.rectangle(img_array, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(img_array, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+
         st.image(cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB), caption="Result")
